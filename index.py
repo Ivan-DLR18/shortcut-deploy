@@ -48,6 +48,7 @@ def generar_token():
 
 # ── Validar acceso ─────────────────────────────────────
 async def validar_acceso(token: str):
+    print("Accedí a función validar_acceso")
     result = supabase.table("tokens")\
         .select("*, users(id)")\
         .eq("token", token)\
@@ -58,10 +59,17 @@ async def validar_acceso(token: str):
     if not result.data:
         raise HTTPException(status_code=403, detail="Token inválido o inactivo")
     
-    print("Llave validada correctamente!")
 
     return result.data
 
+# ── Check token status ─────────────────────────────────────
+@app.get("/check")
+async def check(x_api_token: str = Header(...)):
+    token_data = await validar_acceso(x_api_token)
+
+    print("Llave validada correctamente!")
+
+    return token_data['users']['id']
 
 # ── Buscar películas ─────────────────────────────────────
 @app.get("/buscar")
