@@ -2,3 +2,4 @@
 .film-env/
 json-clean-test.ipynb
 .DS_Store
+__pycache__/
