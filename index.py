@@ -17,9 +17,8 @@ botasaurus_semaphore = asyncio.Semaphore(1)
     output=None,
     create_error_logs=False
 )
-def letterboxd_request(request: Request, data):
-    response = request.google_get(data)
-
+def letterboxd_request(req: Request, data):
+    response = req.google_get(data)
     print(response.status_code)
     return response.json()
 
