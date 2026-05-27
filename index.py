@@ -7,17 +7,24 @@ from pydantic import BaseModel, Field
 import asyncio
 import re
 from botasaurus.request import request, Request
+from botasaurus.browser import browser, Driver
 import time
 
 botasaurus_semaphore = asyncio.Semaphore(1)
 
-@request(
-    cache=False,
-    output=None,
-    create_error_logs=False
+# @request(
+#     cache=False,
+#     output=None,
+#     create_error_logs=False
+# )
+# def letterboxd_request(request: Request, data):
+@browser(
+    reuse_driver=True
 )
-def letterboxd_request(request: Request, data):
-    response = request.get(data)
+def letterboxd_request(driver: Driver, link):
+    response = driver.google_get(link)
+    # response = request.google_get(data)
+
     print(response.status_code)
     return response.json()
 
@@ -48,7 +55,7 @@ def generar_token():
 
 # ── Validar acceso ─────────────────────────────────────
 async def validar_acceso(token: str):
-    print("Accedí a función validar_acceso")
+    print("Accediendo a función validar_acceso")
     result = supabase.table("tokens")\
         .select("*, users(id)")\
         .eq("token", token)\
