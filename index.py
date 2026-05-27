@@ -12,18 +12,13 @@ import time
 
 botasaurus_semaphore = asyncio.Semaphore(1)
 
-# @request(
-#     cache=False,
-#     output=None,
-#     create_error_logs=False
-# )
-# def letterboxd_request(request: Request, data):
-@browser(
-    reuse_driver=True
+@request(
+    cache=False,
+    output=None,
+    create_error_logs=False
 )
-def letterboxd_request(driver: Driver, link):
-    response = driver.google_get(link)
-    # response = request.google_get(data)
+def letterboxd_request(request: Request, data):
+    response = request.google_get(data)
 
     print(response.status_code)
     return response.json()
