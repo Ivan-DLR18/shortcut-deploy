@@ -18,7 +18,13 @@ botasaurus_semaphore = asyncio.Semaphore(1)
     create_error_logs=False
 )
 def letterboxd_request(req: Request, data):
-    response = req.google_get(data)
+    response = req.get(
+        data,
+        headers={
+            "Referer": "https://www.google.com/",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+        }
+    )
     print(response.status_code)
     return response.json()
 
