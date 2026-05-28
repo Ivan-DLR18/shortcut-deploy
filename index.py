@@ -16,7 +16,7 @@ botasaurus_semaphore = asyncio.Semaphore(1)
     cache=False,
     output=None,
     create_error_logs=False,
-    proxy="http://ntsamyda:sj67ugqfvesr@191.96.254.138:6185/"
+    proxy=os.getenv("PROXY")
 )
 def letterboxd_request(req: Request, data):
     response = req.get(
