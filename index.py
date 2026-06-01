@@ -105,10 +105,14 @@ async def buscar(
     items = res.get('items', [])
     for i in items:
         film = i.get('film', {})
-        id = film.get('id', '')
         link = film.get('link', '')
+        try:
+            poster_link = film.get('poster', {}).get('sizes', [])[0].get('url', )
+        except IndexError:
+            poster_link = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxAQEBUQEBAVFRUVFRUVFRUVFRUVFRUVFRUWFhUVFRUYHSggGBolGxUVITEhJSkrLi4uFx8zODMsNygtLisBCgoKDg0OGhAQGi0fHyUtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAAEAAQMBEQACEQEDEQH/xAAXAAADAQAAAAAAAAAAAAAAAAAAAQID/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEAMQAAAB6AAAAP/EABQQAQAAAAAAAAAAAAAAAAAAACD/2gAIAQEAAT8Af//EABQRAQAAAAAAAAAAAAAAAAAAACD/2gAIAQIBAT8Af//EABQRAQAAAAAAAAAAAAAAAAAAACD/2gAIAQMBAT8Af//Z"
+        id = film.get('id', '')
         name = film.get('fullDisplayName', {})
-        movie_dict[id] = {'name': name, 'link': link}
+        movie_dict[id] = {'name': name, 'link': link, 'poster': poster_link}
 
     supabase.table('result_cache').upsert({
         "user_id": token_data["users"]["id"],
@@ -121,7 +125,7 @@ async def buscar(
         .eq("token", x_api_token)\
         .execute()
     
-    movie_list = [x['name'] for x in movie_dict.values()]
+    movie_list = {x['name']: x.get('poster', '') for x in movie_dict.values()}
 
     return movie_list
 
@@ -166,7 +170,10 @@ async def seleccionar(body: SeleccionarRequest, x_api_token: str = Header(...)):
         streaming_list = data['best']['stream']
         streaming_options = [x['name'] for x in streaming_list]
 
-        return streaming_options
+        if streaming_options:
+            return streaming_options
+        else:
+            return "No se encontraron opciones de streaming para este título"
 
     else:
         uid = None
