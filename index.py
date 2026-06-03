@@ -134,6 +134,7 @@ async def buscar(
 @app.post("/seleccionar")
 async def seleccionar(body: SeleccionarRequest, x_api_token: str = Header(...)):
     token_data = await validar_acceso(x_api_token)
+    print(body.movie_title)
 
     response = supabase.table("result_cache")\
         .select("results")\
@@ -152,7 +153,8 @@ async def seleccionar(body: SeleccionarRequest, x_api_token: str = Header(...)):
         response_html = await client.get(selected_movie['link'])
         html = response_html.text
     
-    uid_match = re.search(r'"uid":"film:\d\d\d+"', html)
+    uid_match = re.search(r'uid.+film:\d\d\d+', html)
+    print(uid_match)
 
     time.sleep(1.3)
 
